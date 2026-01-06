@@ -1,10 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TODO App - Feathers</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.46.1/dist/full.css" rel="stylesheet" type="text/css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@2.46.1/dist/full.css"
+      rel="stylesheet"
+      type="text/css"
+    />
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css"
       rel="stylesheet"
@@ -13,16 +17,18 @@
   </head>
   <body data-theme="dracula">
     <main class="container mx-auto p-8 max-w-2xl">
-      <h1 class="font-medium leading-tight text-5xl mt-0 mb-6 text-center">My TODO List</h1>
+      <h1 class="font-medium leading-tight text-5xl mt-0 mb-6 text-center">
+        My TODO List
+      </h1>
 
       <div class="form-control w-full mb-6">
         <form class="flex gap-2" onsubmit="addTodo(event)">
-          <input 
-            name="todo" 
-            id="todo-input" 
-            type="text" 
-            placeholder="Add a new todo..." 
-            class="input input-bordered flex-1" 
+          <input
+            name="todo"
+            id="todo-input"
+            type="text"
+            placeholder="Add a new todo..."
+            class="input input-bordered flex-1"
             required
           />
           <button type="submit" class="btn btn-primary">Add</button>
@@ -33,7 +39,9 @@
         <div class="card-body">
           <h2 class="card-title mb-4">Todos</h2>
           <div id="todos-list" class="space-y-2">
-            <p class="text-center text-gray-500" id="empty-state">No todos yet. Add one above!</p>
+            <p class="text-center text-gray-500" id="empty-state">
+              No todos yet. Add one above!
+            </p>
           </div>
         </div>
       </div>
@@ -43,76 +51,77 @@
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
       // Set up socket.io (connect to the same server)
-      const socket = io()
+      const socket = io();
       // Initialize a Feathers app
-      const app = feathers()
+      const app = feathers();
 
       // Register socket.io to talk to our server
-      app.configure(feathers.socketio(socket))
+      app.configure(feathers.socketio(socket));
 
       // Get references to DOM elements
-      const todosList = document.getElementById('todos-list')
-      const emptyState = document.getElementById('empty-state')
-      const todoInput = document.getElementById('todo-input')
+      const todosList = document.getElementById("todos-list");
+      const emptyState = document.getElementById("empty-state");
+      const todoInput = document.getElementById("todo-input");
 
       // Form submission handler that creates a new todo
       async function addTodo(event) {
-        event.preventDefault()
-        
-        const text = todoInput.value.trim()
-        if (!text) return
+        event.preventDefault();
 
-        try {
+        const text = todoInput.value.trim();
+        if (!text) return;
+
+        // try {
           // Create a new todo with the input field value
-          await app.service('todos').create({
+          await app.service("todos").create({
             text: text,
-            completed: false
-          })
-          
-          todoInput.value = ''
-        } catch (error) {
-          console.error('Error creating todo:', error)
-          alert('Failed to create todo. Please try again.')
-        }
+            completed: false,
+          });
+
+          todoInput.value = "";
+        // } catch (error) {
+        //   console.error("Error creating todo:", error);
+        //   alert("Failed to create todo. Please try again.");
+        // }
       }
 
       // Toggle todo completion status
       async function toggleTodo(id, completed) {
         try {
-          await app.service('todos').patch(id, { completed: !completed })
+          await app.service("todos").patch(id, { completed: !completed });
         } catch (error) {
-          console.error('Error updating todo:', error)
-          alert('Failed to update todo. Please try again.')
+          console.error("Error updating todo:", error);
+          alert("Failed to update todo. Please try again.");
         }
       }
 
       // Delete a todo
       async function deleteTodo(id) {
         try {
-          await app.service('todos').remove(id)
+          await app.service("todos").remove(id);
         } catch (error) {
-          console.error('Error deleting todo:', error)
-          alert('Failed to delete todo. Please try again.')
+          console.error("Error deleting todo:", error);
+          alert("Failed to delete todo. Please try again.");
         }
       }
 
       // Renders a single todo item
       function renderTodo(todo) {
-        const todoId = `todo-${todo.id || todo._id}`
-        const existingTodo = document.getElementById(todoId)
-        
-        const todoElement = document.createElement('div')
-        todoElement.id = todoId
-        todoElement.className = 'flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300 transition-colors'
-        
+        const todoId = `todo-${todo.id || todo._id}`;
+        const existingTodo = document.getElementById(todoId);
+
+        const todoElement = document.createElement("div");
+        todoElement.id = todoId;
+        todoElement.className =
+          "flex items-center gap-3 p-3 bg-base-100 rounded-lg hover:bg-base-300 transition-colors";
+
         todoElement.innerHTML = `
           <input 
             type="checkbox" 
             class="checkbox checkbox-primary" 
-            ${todo.completed ? 'checked' : ''}
+            ${todo.completed ? "checked" : ""}
             onchange="toggleTodo('${todo.id || todo._id}', ${todo.completed})"
           />
-          <span class="flex-1 ${todo.completed ? 'line-through text-gray-500' : ''}">
+          <span class="flex-1 ${todo.completed ? "line-through text-gray-500" : ""}">
             ${escapeHtml(todo.text)}
           </span>
           <button 
@@ -124,69 +133,71 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-        `
-        
+        `;
+
         if (existingTodo) {
-          existingTodo.replaceWith(todoElement)
+          existingTodo.replaceWith(todoElement);
         } else {
-          todosList.appendChild(todoElement)
+          todosList.appendChild(todoElement);
         }
-        
-        updateEmptyState()
+
+        updateEmptyState();
       }
 
       // Remove a todo from the DOM
       function removeTodo(id) {
-        const todoElement = document.getElementById(`todo-${id}`)
+        const todoElement = document.getElementById(`todo-${id}`);
         if (todoElement) {
-          todoElement.remove()
-          updateEmptyState()
+          todoElement.remove();
+          updateEmptyState();
         }
       }
 
       // Update empty state visibility
       function updateEmptyState() {
-        const hasTodos = todosList.querySelectorAll('[id^="todo-"]').length > 0
-        emptyState.style.display = hasTodos ? 'none' : 'block'
+        const hasTodos = todosList.querySelectorAll('[id^="todo-"]').length > 0;
+        emptyState.style.display = hasTodos ? "none" : "block";
       }
 
       // Escape HTML to prevent XSS
       function escapeHtml(text) {
-        const div = document.createElement('div')
-        div.textContent = text
-        return div.innerHTML
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
       }
 
       // Initialize the app
       const main = async () => {
         try {
           // Find all existing todos
-          const todos = await app.service('todos').find()
-          
+          debugger;
+          const todos = await app.service("todos").find();
+
           // Clear the list first
-          todosList.innerHTML = ''
+          todosList.innerHTML = "";
           if (todos.data) {
             // If paginated response
-            todos.data.forEach(renderTodo)
+            todos.data.forEach(renderTodo);
           } else if (Array.isArray(todos)) {
             // If array response
-            todos.forEach(renderTodo)
+            todos.forEach(renderTodo);
           }
 
           // Listen for real-time events
-          app.service('todos').on('created', renderTodo)
-          app.service('todos').on('updated', renderTodo)
-          app.service('todos').on('patched', renderTodo)
-          app.service('todos').on('removed', (todo) => {
-            removeTodo(todo.id || todo._id)
-          })
+          app.service("todos").on("created", renderTodo);
+          app.service("todos").on("updated", renderTodo);
+          app.service("todos").on("patched", renderTodo);
+          app.service("todos").on("removed", (todo) => {
+            removeTodo(todo.id || todo._id);
+          });
         } catch (error) {
-          console.error('Error initializing app:', error)
-          todosList.innerHTML = '<p class="text-error">Failed to load todos. Please refresh the page.</p>'
+          console.error("Error initializing app:", error);
+          todosList.innerHTML =
+            '<p class="text-error">Failed to load todos. Please refresh the page.</p>';
         }
-      }
+      };
 
-      main()
+      main();
     </script>
   </body>
 </html>

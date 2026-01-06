@@ -22,6 +22,7 @@ NODE_ENV=development
 ## Database Connection
 
 The `default.ts` file loads environment variables and provides:
+
 - `config.database.connectionString` - PostgreSQL connection string
 - `config.database.connectionConfig` - Connection object for pg library
 - `config.port` - Server port
@@ -32,12 +33,12 @@ The `default.ts` file loads environment variables and provides:
 Import the config in your application:
 
 ```typescript
-import config from './config/default.js'
+import config from "./config/default.js";
 
 // Use database connection
-const connectionString = config.database.connectionString
-const connectionConfig = config.database.connectionConfig
+const connectionString = config.database.connectionString;
+const connectionConfig = config.database.connectionConfig;
 
 // Use server port
-const port = config.port
+const port = config.port;
 ```
